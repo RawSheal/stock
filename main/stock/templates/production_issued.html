@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block heading %}Production Issued{% endblock %}
+{% block addbutton %}<div class="add-button">Add+</div>{% endblock %}
+
+{% block table %}
+<table>
+        <tr>
+            <th>Date</th>
+            <th>Bill No</th>
+            <th>Article</th>
+            <th>No of Article</th>
+            <th>Article Avg Weight</th>
+            <th>Required Amt</th>
+            <th>Name</th>
+            <th>Lot</th>
+            <th>Content</th>
+            <th>Yarn Count</th>
+            <th>Colour</th>
+            <th>cone</th>
+            <th>Gross</th>
+            <th>Net</th>
+            <th>Remarks</th>
+        </tr>
+        {% for data in datas %}
+        <tr>
+            <td>{{ data.date }}</td>
+            <td>{{ data.bill_no }}</td>
+            <td>{{ data.article }}</td>
+            <td>{{ data.no_of_article }}</td>
+            <td>{{ data.average_weight_of_article }}</td>
+            <td>{{ data.required_weight_for_prod }}</td>
+            <td>{{ data.name }}</td>
+            <td>{{ data.yarn_lot }}</td>
+            <td>{{ data.content }}</td>
+            <td>{{ data.yarn_count }}</td>
+            <td>{{ data.colour }}</td>
+            <td>{{ data.no_of_cones }}</td>
+            <td>{{ data.gross_weight }}</td>
+            <td>{{ data.net_weight }}</td>
+            <td>{{ data.remarks }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

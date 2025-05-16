@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block heading %}Issued{% endblock %}
+{% block addbutton %}<div class="add-button">Add+</div>{% endblock %}
+{% block table %}
+<table>
+        <tr>
+            <th>Date</th>
+            <th>Bill No</th>
+            <th>Name</th>
+            <th>Lot</th>
+            <th>Content</th>
+            <th>Yarn Count</th>
+            <th>Colour</th>
+            <th>cone</th>
+            <th>Gross</th>
+            <th>Net</th>
+            <th>Remarks</th>
+        </tr>
+        {% for data in datas %}
+        <tr>
+            <td>{{ data.date }}</td>
+            <td>{{ data.bill_no }}</td>
+            <td>{{ data.name }}</td>
+            <td>{{ data.yarn_lot }}</td>
+            <td>{{ data.content }}</td>
+            <td>{{ data.yarn_count }}</td>
+            <td>{{ data.colour }}</td>
+            <td>{{ data.no_of_cones }}</td>
+            <td>{{ data.gross_weight }}</td>
+            <td>{{ data.net_weight }}</td>
+            <td>{{ data.remarks }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

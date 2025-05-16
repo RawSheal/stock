@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block heading %}Production Report {% endblock %}
+{% block table %}
+<table>
+        <tr>
+            <th>Date</th>
+            <th>Bill No</th>
+            <th>Article</th>
+            <th>No of Article</th>
+            <th>Article Avg Weight</th>
+            <th>Required Amt</th>
+            <th>Name</th>
+            <th>Lot</th>
+            <th>Content</th>
+            <th>Yarn Count</th>
+            <th>Colour</th>
+            <th>Cone Out</th>
+            <th>Gross Out</th>
+            <th>Net Out</th>
+            <th>Cone In</th>
+            <th>Gross In</th>
+            <th>Net In</th>
+            <th>Total Usage</th>
+            <th>Returned Pcs</th>
+            <th>Weight of Pcs</th>
+            <th>Yarn Wastage</th>
+            <th>Status</th>
+        </tr>
+        {% for data in merged_data %}
+        <tr style='{% if data.returned_pcs == ''%}background-color: rgb(218, 77, 77){% else %} background-color:rgb(44, 117, 89) {% endif %}'>
+            <td>{{ data.date }}</td>
+            <td>{{ data.bill_no }}</td>
+            <td>{{ data.article }}</td>
+            <td>{{ data.no_of_article }}</td>
+            <td>{{ data.average_weight_of_article }}</td>
+            <td>{{ data.required_weight_for_prod }}</td>
+            <td>{{ data.name }}</td>
+            <td>{{ data.yarn_lot }}</td>
+            <td>{{ data.content }}</td>
+            <td>{{ data.yarn_count }}</td>
+            <td>{{ data.colour }}</td>
+            <td>{{ data.cone_out }}</td>
+            <td>{{ data.gross_out }}</td>
+            <td>{{ data.net_out }}</td>
+            <td>{{ data.cone_in }}</td>
+            <td>{{ data.gross_in }}</td>
+            <td>{{ data.net_in }}</td>
+            <td>{{ data.total_usage }}</td>
+            <td>{{ data.returned_pcs }}</td>
+            <td>{{ data.weight_of_pcs }}</td>
+            <td>{{ data.yarn_wastage }}</td>
+            <td>
+                {% if data.gross_in == "" %}
+                pending
+                {% else %}
+                done
+                {% endif %}
+
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

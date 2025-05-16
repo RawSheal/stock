@@ -1,0 +1,87 @@
+            MODEL SECTION
+
+used abstract base model to keep DRY coding:
+
+class CommonInfo(models.Model):
+    date = models.DateField(auto_now_add=True)
+    bill_no = models.CharField(max_length=50)
+    name = models.CharField(max_length=50)
+    yarn_lot = models.CharField(max_length=50)
+    content = models.CharField(max_length=50)
+    yarn_count = models.CharField(max_length=50)
+    no_of_cones = models.PositiveIntegerField()
+    avg_cone_weight = models.DecimalField(max_digits=10, decimal_places=3)
+    gross_weight = models.DecimalField(max_digits=10, decimal_places=3)
+    net_weight = models.DecimalField(max_digits=10, decimal_places=3, editable=False, null=True)
+    
+    class Meta:
+        abstract = True
+        
+    def calculate_net_weight(self):
+        if self.gross_weight is not None:
+            self.net_weight = self.gross_weight - (self.avg_cone_weight * self.no_of_cones)
+
+    def save(self, *args, **kwargs):
+        self.calculate_net_weight()
+        super().save(*args, **kwargs)
+
+class Receipt(CommonInfo, models.Model):
+     def __str__(self):
+        return f'{self.name}-{self.yarn_count}-{self.content}'
+
+class Issued(CommonInfo, models.Model):
+     def __str__(self):
+        return f'{self.name}-{self.yarn_count}-{self.content}'
+
+class Production_Issued(CommonInfo, models.Model):
+    article = models.CharField(max_length=50)
+    no_of_article = models.PositiveIntegerField()
+    average_weight_of_article = models.DecimalField(max_digits=10, decimal_places=3)
+    required_weight_for_prod = models.DecimalField(max_digits=10, decimal_places=3, editable=False, null=True)
+    
+    def __str__(self):
+        return f'{self.name}-{self.yarn_count}-{self.content}'
+    
+    def save(self, *args, **kwargs):
+        self.calculate_net_weight()  # From CommonInfo
+
+        if self.no_of_article and self.average_weight_of_article:
+            self.required_weight_for_prod = self.no_of_article * self.average_weight_of_article
+
+        super().save(*args, **kwargs)
+    
+    
+class Production_Return(CommonInfo, models.Model):
+    article = models.CharField(max_length=50, blank=True, editable=False)
+    no_of_article = models.PositiveIntegerField(null=True, blank=True, editable=False)
+    average_weight_of_article = models.DecimalField(max_digits=10, decimal_places=3, null=True, blank=True, editable=False)
+    required_weight_for_prod = models.DecimalField(max_digits=10, decimal_places=3, editable=False, null=True)
+    yarn_wastage = models.DecimalField(max_digits=10, decimal_places=3, editable=False, null=True)
+
+    def __str__(self):
+        return f'{self.name}-{self.yarn_count}-{self.content}'
+    
+    def save(self, *args, **kwargs):
+        self.calculate_net_weight()
+
+        # Try to find the matching Production_Issued record
+        try:
+            issued = Production_Issued.objects.get(bill_no=self.bill_no)
+
+            # Copy matching fields
+            self.article = issued.article
+            self.no_of_article = issued.no_of_article
+            self.average_weight_of_article = issued.average_weight_of_article
+
+            # Recalculate production usage
+            if self.no_of_article and self.average_weight_of_article:
+                self.required_weight_for_prod = self.no_of_article * self.average_weight_of_article
+
+            if self.net_weight is not None and self.required_weight_for_prod is not None:
+                self.yarn_wastage = self.net_weight - self.required_weight_for_prod
+
+        except Production_Issued.DoesNotExist:
+            pass  # Optionally raise an error or leave it empty
+
+        super().save(*args, **kwargs)
+    
