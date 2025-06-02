@@ -1,5 +1,22 @@
 {% extends 'base.html' %}
-<h3>{% block heading %}Stock Report{% endblock %}</h3>
+{% block heading %}Stock Report{% endblock %}
+
+{% block filter %}
+<form method="get" class="filter-form">
+    <input type="text" name="content" placeholder="Content" value="{{ filters.content }}">
+    <input type="text" name="colour" placeholder="Colour" value="{{ filters.colour }}">
+    <input type="text" name="yarn_lot" placeholder="Yarn Lot" value="{{ filters.yarn_lot }}">
+    <input type="text" name="yarn_count" placeholder="Yarn Count" value="{{ filters.yarn_count }}">
+    <select name="status">
+        <option value="">All Statuses</option>
+        <option value="in_stock" {% if filters.status == 'in_stock' %}selected{% endif %}>In Stock</option>
+        <option value="out_of_stock" {% if filters.status == 'out_of_stock' %}selected{% endif %}>Out of Stock</option>
+    </select>
+    <button type="submit">Filter</button>
+</form>
+{% endblock %}
+
+
 {% block table %}
 <table border="1">
     <thead>
@@ -13,6 +30,7 @@
             <th>Production Issued</th>
             <th>Production Return</th>
             <th>Total Stock</th>
+            <th>Status</th>
         </tr>
     </thead>
     <tbody>
@@ -27,8 +45,26 @@
             <td>{{ row.prod_issued }}</td>
             <td>{{ row.prod_return }}</td>
             <td><strong>{{ row.total_stock }}</strong></td>
-        </tr>
+            {% if row.total_stock <= 0 %}
+            <td style="background: rgb(165, 48, 48);">Out of Stock</td>
+            {% else %}
+            <td style="background: rgb(103, 194, 103);">In stock</td>
+            {% endif %}
+          
         {% endfor %}
     </tbody>
 </table>
 {% endblock %}
+
+{% block scripts %}
+  const addButton = document.getElementsByClassName('add-button')[0];
+    const formModal = document.getElementById('formModal')
+    const closeModal= document.getElementById('closeModal')
+    addButton.addEventListener('click',()=>{
+        formModal.style.display = 'block'
+    })
+
+    closeModal.addEventListener('click',()=>{
+        formModal.style.display = 'none'
+    })
+ {% endblock %}

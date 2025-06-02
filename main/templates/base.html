@@ -51,8 +51,9 @@
     header {
         background-color: whitesmoke;
         display: flex;
+        flex-direction: column;
         align-items: center;
-        justify-content: space-between;
+        justify-content: space-around;
         padding:  1rem;
     }
 
@@ -71,7 +72,22 @@
         width: 100%;
         background-color: whitesmoke;
         background-color: lightgray;
+        height: 75.5vh;
+        overflow: scroll;
     }
+
+    .table::-webkit-scrollbar {
+    display: none;                  /* Chrome, Safari, Opera */
+}
+
+thead th {
+    position: sticky;
+    top: 0;
+    background-color: rgb(48, 94, 180);
+    color: white;
+    z-index: 2; /* stays above scrolling content */
+    padding: 0.5rem;
+}
 
     .form{
         background-color: whitesmoke;
@@ -89,14 +105,20 @@
         background-color: whitesmoke;
     }
 
+
     table th {
         background-color: rgb(48, 94, 180);
         color: whitesmoke;
+        position: sticky;
     }
 
     table, th, td{
         border: solid 1px black;
         border-collapse: collapse;
+    }
+
+    table tr {
+        cursor: pointer;
     }
 
     table tr:hover {
@@ -165,11 +187,30 @@
     background-color: rgb(48, 94, 180);
 }
 
+.filter-form {
+    margin: 1rem 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.filter-form input, .filter-form select {
+    padding: 6px;
+    border: 1px solid #ccc;
+}
+.filter-form button {
+    padding: 6px 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+
 </style>
 
 <body>
     <nav>
-            <div style="color: rgb(230, 128, 32); margin-bottom:1rem;"><h2>Shangrila</h2></div>
+            <div style="color: rgb(230, 128, 32); margin-bottom:1rem;"><h2>Yarns</h2></div>
             <a href="{% url 'home' %}">Home</a>
             <a href="{% url 'receipt' %}">Receipt</a>
             <a href="{% url 'issued' %}">Issued</a>
@@ -180,8 +221,11 @@
     
     <div class="content">
         <header>
-            <h3>{% block heading %}{% endblock %}</h3>
-            {% block addbutton %}{% endblock %}
+            <div style="display: flex; flex-direction:row; align-items:center; justify-content: space-between; width:100%;">
+                <h3>{% block heading %}{% endblock %}</h3>
+                {% block addbutton %}{% endblock %}
+            </div>
+            {% block filter %}{% endblock %}
         </header>
         <div class="table">
             {% block table %}
@@ -203,16 +247,8 @@
 
 
 <script>
-    const addButton = document.getElementsByClassName('add-button')[0];
-    const formModal = document.getElementById('formModal')
-    const closeModal= document.getElementById('closeModal')
-    addButton.addEventListener('click',()=>{
-        formModal.style.display = 'block'
-    })
-
-    closeModal.addEventListener('click',()=>{
-        formModal.style.display = 'none'
-    })
+    {% block scripts %}
+    {% endblock %}
 </script>
 </body>
 </html>

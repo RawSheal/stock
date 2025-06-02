@@ -2,9 +2,21 @@
 
 {% block heading %}Production Returned{% endblock %}
 {% block addbutton %}<div class="add-button">Add+</div>{% endblock %}
+{% block filter %}
+<form method="get" class="filter-form">
+    <input type="text" name="bill_no" placeholder="Bill No" value="{{ filters.bill_no }}">
+    <input type="text" name="name" placeholder="Name" value="{{ filters.name }}">
+    <input type="text" name="content" placeholder="Content" value="{{ filters.content }}">
+    <input type="text" name="colour" placeholder="Colour" value="{{ filters.colour }}">
+    <input type="text" name="yarn_count" placeholder="Yarn Count" value="{{ filters.yarn_count }}">
+    <button type="submit">Filter</button>
+</form>
+{% endblock %}
+
 {% block table %}
 <table>
-        <tr>
+  <thead>
+    <tr>
             <th>Date</th>
             <th>Bill No</th>
             <th>Article</th>
@@ -24,8 +36,10 @@
             <th>Weight of Pcs</th>
             <th>Remarks</th>
         </tr>
-        {% for data in datas %}
-        <tr>
+  </thead>
+      <tbody>
+          {% for data in datas %}
+        <tr class="clickable-row" data-href="{% url 'production_return_edit' data.id %}" tabindex="0">
             <td>{{ data.date }}</td>
             <td>{{ data.bill_no }}</td>
             <td>{{ data.article }}</td>
@@ -46,5 +60,73 @@
             <td>{{ data.remarks }}</td>
         </tr>
         {% endfor %}
+      </tbody>
+        
     </table>
 {% endblock %}
+
+ {% block scripts %}
+
+  const addButton = document.getElementsByClassName('add-button')[0];
+    const formModal = document.getElementById('formModal')
+    const closeModal= document.getElementById('closeModal')
+    addButton.addEventListener('click',()=>{
+        formModal.style.display = 'block'
+    })
+
+    closeModal.addEventListener('click',()=>{
+        formModal.style.display = 'none'
+    })
+
+ <!--  -->
+    document.addEventListener("DOMContentLoaded", function() {
+  const rows = document.querySelectorAll(".clickable-row");
+
+  rows.forEach(row => {
+    row.addEventListener("click", function() {
+      const target = row.dataset.href;
+      if (target) {
+        window.location.href = target;
+      }
+    });
+  });
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+  const rows = Array.from(document.querySelectorAll(".clickable-row"));
+  let currentIndex = 0;
+
+  function highlightRow(index) {
+    rows.forEach(row => row.classList.remove("highlighted"));
+    if (rows[index]) {
+      rows[index].classList.add("highlighted");
+      rows[index].focus();
+    }
+  }
+
+  document.addEventListener("keydown", function (e) {
+    if (rows.length === 0) return;
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      currentIndex = (currentIndex + 1) % rows.length;
+      highlightRow(currentIndex);
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      currentIndex = (currentIndex - 1 + rows.length) % rows.length;
+      highlightRow(currentIndex);
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      const target = rows[currentIndex].dataset.href;
+      if (target) {
+        window.location.href = target;
+      }
+    }
+  });
+
+  // Optional: highlight the first row initially
+  highlightRow(currentIndex);
+});
+
+
+ {% endblock %}

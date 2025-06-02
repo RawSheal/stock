@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+<h3>{% block heading %}Edit Issued{% endblock %}</h3>
+{% block table %}
+    <div style="padding: 2rem; height:100%;">
+        <form method="post">
+            {% csrf_token %}
+            {{form.as_p}}
+            <button type="Submit">Edit</button>
+        </form>
+    </div>
+    
+{% endblock %}

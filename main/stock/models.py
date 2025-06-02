@@ -28,8 +28,14 @@ class CommonInfo(models.Model):
         super().save(*args, **kwargs)
 
 class Receipt(CommonInfo, models.Model):
-     def __str__(self):
-        return f'{self.name}-{self.yarn_count}-{self.content}'
+    PURCHASED_TYPE = {
+             ('Imported','Imported'),
+             ('Local','Local')
+         }
+    receipt_type = models.CharField(max_length=50, choices=PURCHASED_TYPE, default="", null=True) 
+    
+    def __str__(self):
+       return f'{self.name}-{self.yarn_count}-{self.content}'
 
 class Issued(CommonInfo, models.Model):
      def __str__(self):
